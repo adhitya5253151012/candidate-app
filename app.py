@@ -1,196 +1,236 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import itertools
 
-# =========================
-# CONFIG
-# =========================
-st.set_page_config(page_title="Smart Candidate System", layout="wide")
+st.set_page_config(layout="wide")
 
-# =========================
-# STYLE
-# =========================
+# ======================
+# FONT + ICON
+# ======================
+st.markdown("""
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans&display=swap" rel="stylesheet">
+""", unsafe_allow_html=True)
+
+# ======================
+# CSS (PIXEL + ANIMASI)
+# ======================
 st.markdown("""
 <style>
-.main {background-color: #f5f7fa;}
-h1 {color: #1f77b4; text-align: center;}
-.card {
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f1f5f9;
+}
+
+/* HEADER */
+.header {
+    background: linear-gradient(90deg,#4338ca,#7c3aed);
     padding: 20px;
-    border-radius: 15px;
-    background-color: white;
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 10px;
+}
+
+/* SIDEBAR */
+.sidebar-canva {
+    background: linear-gradient(180deg,#4338ca,#6366f1);
+    padding: 20px;
+    border-radius: 12px;
+    color: white;
+    height: 90vh;
+}
+
+/* NAV */
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: rgba(255,255,255,0.8);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-item:hover {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    transform: translateX(5px) scale(1.02);
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+}
+
+.nav-active {
+    background: rgba(255,255,255,0.25);
+    color: white;
+}
+
+/* CARD */
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+.best-card {
+    background: linear-gradient(135deg,#312e81,#4338ca,#6366f1);
+    color: white;
+}
+
+/* ANIMASI */
+@keyframes fadeIn {
+    from {opacity:0; transform:translateY(-10px);}
+    to {opacity:1; transform:translateY(0);}
+}
+
+.card {
+    animation: fadeIn 0.5s ease;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
-# TITLE
-# =========================
-st.title("🎯 Smart Candidate Selection System")
-st.write("Menggunakan konsep Matematika Terapan lengkap")
+# ======================
+# HEADER
+# ======================
+st.markdown("""
+<div class="header">
+<h2>🎯 Sistem Pemilihan Kandidat Terbaik</h2>
+<p>Analisis berbasis data & matematika modern</p>
+</div>
+""", unsafe_allow_html=True)
 
-# =========================
-# SIDEBAR INPUT
-# =========================
-st.sidebar.header("📝 Input Kandidat")
+# ======================
+# LAYOUT
+# ======================
+left, right = st.columns([1,4])
 
-nama = st.sidebar.text_input("Nama")
-tes = st.sidebar.slider("Nilai Tes", 0, 100, 70)
-wawancara = st.sidebar.slider("Wawancara", 0, 100, 75)
-pengalaman = st.sidebar.slider("Pengalaman", 0, 10, 2)
+# ======================
+# SIDEBAR
+# ======================
+with left:
+    st.markdown("""
+    <div class="sidebar-canva">
+        <h3>🏆 Sistem Kandidat</h3>
 
-if "data" not in st.session_state:
-    st.session_state.data = []
+        <div class="nav-item nav-active">📊 Dashboard</div>
+        <div class="nav-item">👥 Kandidat</div>
+        <div class="nav-item">📈 Analisis</div>
+        <div class="nav-item">🔗 Himpunan</div>
+        <div class="nav-item">🔀 Kombinasi</div>
+        <div class="nav-item">∑ Model</div>
+        <div class="nav-item">⚙️ Pengaturan</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-# =========================
-# TAMBAH DATA
-# =========================
-if st.sidebar.button("➕ Tambah Kandidat"):
+    st.write("")
 
-    # SPL
-    skor = 0.4*tes + 0.3*wawancara + 0.3*(pengalaman*10)
+    st.subheader("Input Kandidat")
 
-    # LOGIKA KOMPLEKS
-    if tes >= 70 and wawancara >= 75 and pengalaman >= 2:
-        status = "Sangat Layak"
-    elif tes >= 60 and wawancara >= 70:
-        status = "Layak"
-    else:
-        status = "Tidak Layak"
+    nama = st.text_input("Nama")
+    tes = st.number_input("Tes", 0, 100, 75)
+    waw = st.number_input("Wawancara", 0, 100, 75)
+    exp = st.number_input("Pengalaman", 0, 10, 2)
 
-    st.session_state.data.append({
-        "Nama": nama,
-        "Tes": tes,
-        "Wawancara": wawancara,
-        "Pengalaman": pengalaman,
-        "Skor": skor,
-        "Status": status
-    })
+    if "data" not in st.session_state:
+        st.session_state.data = []
 
-    st.sidebar.success("Berhasil ditambahkan!")
+    if st.button("Tambah Kandidat"):
+        skor = 0.4*tes + 0.35*waw + 0.25*(exp*10)
 
-# =========================
-# PROSES DATA
-# =========================
-if len(st.session_state.data) > 0:
+        st.session_state.data.append({
+            "Nama": nama,
+            "Tes": tes,
+            "Waw": waw,
+            "Exp": exp,
+            "Skor": skor
+        })
 
-    df = pd.DataFrame(st.session_state.data)
-    df = df.sort_values(by="Skor", ascending=False)
+# ======================
+# KONTEN
+# ======================
+with right:
 
-    col1, col2 = st.columns(2)
+    data = st.session_state.data
 
-    # =========================
-    # DATA
-    # =========================
-    with col1:
-        st.subheader("📊 Data Kandidat")
-        st.dataframe(df, use_container_width=True)
+    if data:
+        df = pd.DataFrame(data).sort_values("Skor", ascending=False)
 
-    # =========================
-    # TERBAIK
-    # =========================
-    with col2:
-        terbaik = df.iloc[0]
-        st.subheader("🏆 Kandidat Terbaik")
+        # BEST
+        best = df.iloc[0]
+
         st.markdown(f"""
-        <div class="card">
-        <h2>{terbaik['Nama']}</h2>
-        <p>Skor: <b>{terbaik['Skor']:.2f}</b></p>
-        <p>Status: {terbaik['Status']}</p>
+        <div class="card best-card">
+            <h3>🏆 Kandidat Terbaik</h3>
+            <h2>{best['Nama']}</h2>
+            <h1>{round(best['Skor'],2)}</h1>
+            <p>Tes: {best['Tes']} | Waw: {best['Waw']} | Exp: {best['Exp']}</p>
         </div>
         """, unsafe_allow_html=True)
 
-    # =========================
-    # MATRIKS
-    # =========================
-    st.subheader("📐 Matriks")
-    matrix = df[["Tes", "Wawancara", "Pengalaman"]].values
-    st.write(matrix)
+        # GRID 1
+        c1, c2, c3 = st.columns(3)
 
-    # =========================
-    # DETERMINAN
-    # =========================
-    if len(matrix) >= 3:
-        det = np.linalg.det(matrix[:3])
-        st.write("📌 Determinan (3 kandidat pertama):", det)
+        with c1:
+            st.markdown('<div class="card"><h4>Data Kandidat</h4></div>', unsafe_allow_html=True)
+            st.dataframe(df)
 
-    # =========================
-    # VEKTOR (COSINE)
-    # =========================
-    st.subheader("📏 Cosine Similarity")
+        with c2:
+            st.markdown('<div class="card"><h4>Cosine Similarity</h4></div>', unsafe_allow_html=True)
 
-    ideal = np.array([100, 100, 5])
+            ideal = np.array([100,100,5])
 
-    def cosine(a, b):
-        return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+            def cos(a,b):
+                return np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b))
 
-    df["Similarity"] = [cosine(i, ideal) for i in matrix]
-    st.dataframe(df[["Nama", "Similarity"]])
+            matrix = df[["Tes","Waw","Exp"]].values
+            df["Sim"] = [cos(i, ideal) for i in matrix]
 
-    # =========================
-    # HIMPUNAN
-    # =========================
-    st.subheader("📚 Himpunan")
+            st.dataframe(df[["Nama","Sim"]])
 
-    lulus_tes = set(df[df["Tes"] >= 70]["Nama"])
-    lulus_wawancara = set(df[df["Wawancara"] >= 75]["Nama"])
+        with c3:
+            st.markdown('<div class="card"><h4>Boolean</h4></div>', unsafe_allow_html=True)
+            df["Boolean"] = df["Skor"] >= 70
+            st.dataframe(df[["Nama","Boolean"]])
 
-    st.write("Lulus Tes:", lulus_tes)
-    st.write("Lulus Wawancara:", lulus_wawancara)
-    st.write("Irisan (∩):", lulus_tes.intersection(lulus_wawancara))
-    st.write("Gabungan (∪):", lulus_tes.union(lulus_wawancara))
+        # GRID 2
+        c4, c5, c6 = st.columns(3)
 
-    # =========================
-    # KOMBINATORIKA
-    # =========================
-    st.subheader("🔢 Kombinatorika")
+        with c4:
+            st.markdown('<div class="card"><h4>Matriks</h4></div>', unsafe_allow_html=True)
+            st.write(matrix)
 
-    kombinasi = list(itertools.combinations(df["Nama"], 2))
-    st.write("Kombinasi 2 Kandidat:", kombinasi)
+        with c5:
+            st.markdown('<div class="card"><h4>Determinan</h4></div>', unsafe_allow_html=True)
+            if len(matrix) >= 3:
+                det = np.linalg.det(matrix[:3])
+                st.write(round(det,2))
 
-    # =========================
-    # BOOLEAN
-    # =========================
-    st.subheader("⚙️ Boolean")
+        with c6:
+            st.markdown('<div class="card"><h4>Grafik</h4></div>', unsafe_allow_html=True)
+            st.bar_chart(df.set_index("Nama")["Skor"])
 
-    def boolean(x, y, z):
-        return (x and y) or z
+        # HIMPUNAN
+        st.markdown('<div class="card"><h4>Himpunan</h4></div>', unsafe_allow_html=True)
 
-    hasil_boolean = boolean(tes >= 70, wawancara >= 75, pengalaman >= 2)
-    st.write("F(x,y,z) = (x ∧ y) ∨ z →", hasil_boolean)
+        A = set(df[df["Tes"]>=70]["Nama"])
+        B = set(df[df["Waw"]>=75]["Nama"])
 
-    # =========================
-    # GRAFIK
-    # =========================
-    st.subheader("📈 Grafik Skor")
+        st.write("A:", A)
+        st.write("B:", B)
+        st.write("A ∩ B:", A & B)
+        st.write("A ∪ B:", A | B)
 
-    fig, ax = plt.subplots()
-    ax.bar(df["Nama"], df["Skor"])
-    ax.set_title("Perbandingan Skor Kandidat")
+        # KOMBINASI
+        st.markdown('<div class="card"><h4>Kombinasi</h4></div>', unsafe_allow_html=True)
 
-    st.pyplot(fig)
+        from itertools import combinations
+        comb = list(combinations(df["Nama"],2))
+        st.write(comb)
 
-# =========================
-# MODEL MATEMATIS
-# =========================
-st.subheader("📘 Model Matematis")
+# ======================
+# MODEL
+# ======================
+st.markdown('<div class="card"><h4>Model Matematis</h4></div>', unsafe_allow_html=True)
 
-st.markdown("""
-- SPL: S = 0.4x + 0.3y + 0.3z  
-- Logika: aturan seleksi kompleks  
-- Boolean: F(x,y,z) = (x ∧ y) ∨ z  
-- Himpunan: ∪ dan ∩  
-- Kombinatorika: kombinasi kandidat  
-- Matriks: representasi data  
-- Determinan: analisis solusi  
-- Vektor: cosine similarity  
-""")
-
-# =========================
-# RESET
-# =========================
-if st.button("🔄 Reset"):
-    st.session_state.data = []
-    st.success("Data direset!")
+st.write("S = 0.4x + 0.35y + 0.25z")
+st.write("F(x,y,z) = (x ∧ y) ∨ z")
