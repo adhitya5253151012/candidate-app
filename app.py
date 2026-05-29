@@ -150,7 +150,6 @@ with right:
 
         st.markdown(f"""
         <div class="card best-card">
-            <h3>🏆 Kandidat Terbaik</h3>
             <h2>{best['Nama']}</h2>
             <h1>{round(best['Skor'],2)}</h1>
             <p>Tes: {best['Tes']} | Waw: {best['Waw']} | Exp: {best['Exp']}</p>
