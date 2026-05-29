@@ -112,15 +112,6 @@ with left:
 <div class="sidebar-canva">
     <h3>🏆 Sistem Kandidat</h3>
 
-    <div class="nav-item nav-active">📊 Dashboard</div>
-    <div class="nav-item">👥 Kandidat</div>
-    <div class="nav-item">📈 Analisis</div>
-    <div class="nav-item">🔗 Himpunan</div>
-    <div class="nav-item">🔀 Kombinasi</div>
-    <div class="nav-item">∑ Model</div>
-    <div class="nav-item">⚙️ Pengaturan</div>
-</div>
-""", unsafe_allow_html=True)
     st.write("")
 
     st.subheader("Input Kandidat")
